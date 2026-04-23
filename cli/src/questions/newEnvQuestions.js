@@ -16,7 +16,7 @@ export const newEnvQuestions = [
                 return validKeyErrorMessage
             }
 
-            const endpoint = "https://api.openai.com/v1/models"
+            const endpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1"
             const response = await fetch(endpoint, {
                 headers: {
                     "Authorization": `Bearer ${apikey}`,

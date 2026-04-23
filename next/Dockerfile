@@ -14,6 +14,8 @@ WORKDIR /next
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+RUN npm config set registry https://registry.npmmirror.com
+
 # Install dependencies
 RUN npm ci
 
