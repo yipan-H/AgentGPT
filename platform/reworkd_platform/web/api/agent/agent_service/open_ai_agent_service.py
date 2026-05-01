@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from fastapi.responses import StreamingResponse as FastAPIStreamingResponse
@@ -39,6 +40,7 @@ from reworkd_platform.web.api.agent.tools.tools import (
 from reworkd_platform.web.api.agent.tools.utils import summarize
 from reworkd_platform.web.api.errors import OpenAIError
 
+logger = logging.getLogger(__name__)
 
 class OpenAIAgentService(AgentService):
     def __init__(
@@ -58,10 +60,12 @@ class OpenAIAgentService(AgentService):
         self.oauth_crud = oauth_crud
 
     async def start_goal_agent(self, *, goal: str) -> List[str]:
+        logger.info(f"Starting goal agent with goal: {goal}")
         prompt = ChatPromptTemplate.from_messages(
             [SystemMessagePromptTemplate(prompt=start_goal_prompt)]
         )
 
+        logger.info(f"Calculating max tokens for prompt: {prompt}")
         self.token_service.calculate_max_tokens(
             self.model,
             prompt.format_prompt(
@@ -70,6 +74,7 @@ class OpenAIAgentService(AgentService):
             ).to_string(),
         )
 
+        logger.info("Calling model to start goal agent")
         completion = await call_model_with_handling(
             self.model,
             ChatPromptTemplate.from_messages(
@@ -80,7 +85,9 @@ class OpenAIAgentService(AgentService):
             callbacks=self.callbacks,
         )
 
+        logger.info(f"Model completion for start_goal_agent: {completion}")
         task_output_parser = TaskOutputParser(completed_tasks=[])
+        logger.info("Parsing model output for new tasks")
         tasks = parse_with_handling(task_output_parser, completion)
 
         return tasks

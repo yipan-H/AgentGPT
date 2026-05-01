@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import APIRouter, Depends
@@ -8,7 +9,7 @@ from reworkd_platform.schemas.user import UserBase
 from reworkd_platform.web.api.dependencies import get_current_user
 
 router = APIRouter()
-
+logger = logging.getLogger(__name__)
 
 class ModelWithAccess(BaseModel):
     name: str
